@@ -29,6 +29,7 @@ func (a *API) Handler() http.Handler {
 }
 
 func (a *API) setupRoutes() {
+	a.router.Use(BasicAuth())
 	a.router.Use(middleware.Recoverer)
 	a.router.Route("/api", func(r chi.Router) {
 		r.Get("/overview", a.handleGetOverview)

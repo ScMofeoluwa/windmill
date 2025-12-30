@@ -29,10 +29,7 @@ export function StatsCard({
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <div className="flex items-baseline gap-2">
-              <h2 className={cn(
-                "font-bold tracking-tight truncate max-w-[180px]",
-                String(value).length > 12 ? "text-lg font-mono" : "text-2xl"
-              )}>{value}</h2>
+              <h2 className="font-bold tracking-tight text-xl">{value}</h2>
               {trend && (
                 <span
                   className={cn(

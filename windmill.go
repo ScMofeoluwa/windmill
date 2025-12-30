@@ -3,6 +3,7 @@ package windmill
 import (
 	"errors"
 	"net/http"
+	"os"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/scmofeoluwa/windmill/internal/api"
@@ -25,6 +26,13 @@ func New(config Config) (*Windmill, error) {
 
 	if config.DLQName == "" {
 		return nil, errors.New("windmill: dlq name is required")
+	}
+
+	username := os.Getenv("WINDMILL_USERNAME")
+	password := os.Getenv("WINDMILL_PASSWORD")
+
+	if username == "" || password == "" {
+		return nil, errors.New("windmill: WINDMILL_USERNAME and WINDMILL_PASSWORD environment variables are required")
 	}
 
 	mon := monitor.New(config.RedisClient, config.DLQName)

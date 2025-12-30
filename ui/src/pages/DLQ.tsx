@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { formatNumber, formatTimestamp } from "@/lib/utils"
-import { AlertCircle, RefreshCw, Trash2, ChevronDown, ChevronRight, RotateCcw, Inbox } from "lucide-react"
+import { AlertCircle, RefreshCw, Trash2, ChevronDown, ChevronRight, RotateCcw, Inbox, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
@@ -152,7 +152,7 @@ export function DLQ() {
         <StatsCard
           title="Last Activity"
           value={stats?.last_activity ? formatTimestamp(stats.last_activity) : "Never"}
-          icon={RotateCcw}
+          icon={Clock}
         />
       </div>
 
@@ -173,7 +173,7 @@ export function DLQ() {
                   <TableHead className="w-[5%]"></TableHead>
                   <TableHead className="w-[35%]">Source Stream</TableHead>
                   <TableHead className="hidden sm:table-cell w-[30%]">Time Failed</TableHead>
-                  <TableHead className="text-right w-[20%] pr-6">Actions</TableHead>
+                  <TableHead className="text-center w-[20%]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -199,8 +199,8 @@ export function DLQ() {
                       <TableCell className="text-muted-foreground text-xs hidden sm:table-cell">
                         {formatTimestamp(msg.timestamp)}
                       </TableCell>
-                      <TableCell className="text-right pr-6">
-                        <div className="flex items-center justify-end gap-1">
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
                           <Button
                             variant="ghost"
                             size="icon"

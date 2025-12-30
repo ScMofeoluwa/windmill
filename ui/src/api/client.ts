@@ -16,6 +16,12 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   })
 
   if (!response.ok) {
+    // If unauthorized, reload to trigger browser's Basic Auth dialog
+    if (response.status === 401) {
+      window.location.reload()
+      throw new ApiError(response.status, 'Unauthorized')
+    }
+
     let message = 'An error occurred'
     try {
       const errorData = (await response.json()) as ErrorResponse
