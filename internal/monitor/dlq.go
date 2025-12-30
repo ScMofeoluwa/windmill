@@ -137,12 +137,12 @@ func (d *DLQService) RequeueAll(ctx context.Context) (int64, error) {
 			break
 		}
 
-		g, ctx := errgroup.WithContext(ctx)
-		g.SetLimit(10)
+		errG, grpCtx := errgroup.WithContext(ctx)
+		errG.SetLimit(10)
 
 		for _, msg := range list.Messages {
-			g.Go(func() error {
-				if err := d.requeue(ctx, &msg); err != nil {
+			errG.Go(func() error {
+				if err := d.requeue(grpCtx, &msg); err != nil {
 					return fmt.Errorf("failed to requeue message %s: %w", msg.ID, err)
 				}
 
@@ -151,7 +151,7 @@ func (d *DLQService) RequeueAll(ctx context.Context) (int64, error) {
 			})
 		}
 
-		if err := g.Wait(); err != nil {
+		if err := errG.Wait(); err != nil {
 			return requeued.Load(), err
 		}
 

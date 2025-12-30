@@ -6,22 +6,17 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type Options struct {
-	RedisClient redis.UniversalClient
-	DLQName     string
-}
-
 type Monitor struct {
 	streams *StreamService
 	dlq     *DLQService
 }
 
-func New(opts Options) *Monitor {
-	redisStream := NewRedisStream(opts.RedisClient)
+func New(redisClient redis.UniversalClient, dlqName string) *Monitor {
+	redisStream := NewRedisStream(redisClient)
 
 	return &Monitor{
-		streams: NewStreamService(redisStream, opts.DLQName),
-		dlq:     NewDLQService(redisStream, opts.DLQName),
+		streams: NewStreamService(redisStream, dlqName),
+		dlq:     NewDLQService(redisStream, dlqName),
 	}
 }
 

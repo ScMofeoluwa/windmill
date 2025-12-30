@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 // Watermill message keys
@@ -122,9 +124,13 @@ func ParseWatermillMessage(values map[string]any) (*WatermillMessage, error) {
 		}
 	}
 
-	if metadata, ok := values[WatermillMetadataKey].(string); ok && metadata != "" && metadata != "{}" {
-		if err := json.Unmarshal([]byte(metadata), &msg.Metadata); err != nil {
-			return nil, fmt.Errorf("failed to parse metadata: %w", err)
+	if metadata, ok := values[WatermillMetadataKey].(string); ok && metadata != "" {
+		if err := msgpack.Unmarshal([]byte(metadata), &msg.Metadata); err != nil {
+			if metadata != "{}" {
+				if jsonErr := json.Unmarshal([]byte(metadata), &msg.Metadata); jsonErr != nil {
+					return nil, fmt.Errorf("failed to parse metadata: %w (msgpack error: %v)", jsonErr, err)
+				}
+			}
 		}
 	}
 

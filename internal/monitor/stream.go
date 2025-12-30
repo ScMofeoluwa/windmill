@@ -26,21 +26,21 @@ func (s *StreamService) GetStreams(ctx context.Context) ([]StreamInfo, error) {
 	}
 
 	streamsInfo := make([]StreamInfo, len(streams))
-	g, ctx := errgroup.WithContext(ctx)
-	g.SetLimit(10)
+	errG, grpCtx := errgroup.WithContext(ctx)
+	errG.SetLimit(10)
 
 	for i, name := range streams {
 		if name == s.dlqName {
 			continue
 		}
 
-		g.Go(func() error {
-			meta, err := s.monitor.GetStreamInfo(ctx, name)
+		errG.Go(func() error {
+			meta, err := s.monitor.GetStreamInfo(grpCtx, name)
 			if err != nil {
 				return nil
 			}
 
-			memory, err := s.monitor.GetMemoryUsage(ctx, name)
+			memory, err := s.monitor.GetMemoryUsage(grpCtx, name)
 			if err != nil {
 				return nil
 			}
@@ -71,7 +71,7 @@ func (s *StreamService) GetStreams(ctx context.Context) ([]StreamInfo, error) {
 		})
 	}
 
-	if err := g.Wait(); err != nil {
+	if err := errG.Wait(); err != nil {
 		return nil, err
 	}
 
