@@ -7,6 +7,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/vmihailenco/msgpack"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -171,9 +173,15 @@ func (d *DLQService) requeue(ctx context.Context, msg *DLQMessage) error {
 		return fmt.Errorf("failed to marshal payload: %w", err)
 	}
 
+	metadataBytes, err := msgpack.Marshal(map[string]string{})
+	if err != nil {
+		return fmt.Errorf("failed to marshal metadata: %w", err)
+	}
+
 	newMsg := map[string]any{
+		WatermillUUIDKey:     generateUUID(),
 		WatermillPayloadKey:  string(payloadBytes),
-		WatermillMetadataKey: "{}",
+		WatermillMetadataKey: string(metadataBytes),
 	}
 
 	_, err = d.monitor.AddMessage(ctx, msg.OriginalTopic, newMsg)
@@ -206,4 +214,8 @@ func (d *DLQService) parseMessage(id string, values map[string]any) (*DLQMessage
 		OriginalTopic: wmMsg.Metadata[TopicPoisonedKey],
 		Error:         wmMsg.Metadata[ReasonPoisonedKey],
 	}, nil
+}
+
+func generateUUID() string {
+	return uuid.New().String()
 }
