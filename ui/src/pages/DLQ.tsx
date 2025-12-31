@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { formatNumber, formatTimestamp } from "@/lib/utils"
+import { formatNumber, formatTimestamp, formatRelativeTime, formatFullDate } from "@/lib/utils"
 import { AlertCircle, RefreshCw, Trash2, ChevronDown, ChevronRight, RotateCcw, Inbox, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -111,8 +111,8 @@ export function DLQ() {
   const rawLoading = statsLoading || messagesLoading || statsFetching || messagesFetching
   const isLoading = useMinLoadingDuration(rawLoading)
 
-  const messageCount = messageList?.messages?.length || 0
-  const hasMessages = messageCount > 0
+  const messageCount = messageList?.total_count || 0
+  const hasMessages = (messageList?.messages?.length || 0) > 0
 
   return (
     <div className="space-y-8">
@@ -151,8 +151,9 @@ export function DLQ() {
         />
         <StatsCard
           title="Last Activity"
-          value={stats?.last_activity ? formatTimestamp(stats.last_activity) : "Never"}
+          value={stats?.last_activity ? formatRelativeTime(stats.last_activity) : "Never"}
           icon={Clock}
+          description={stats?.last_activity ? formatFullDate(stats.last_activity) : undefined}
         />
       </div>
 
@@ -196,8 +197,11 @@ export function DLQ() {
                       <TableCell>
                         <Badge variant="outline" className="font-mono">{msg.original_topic}</Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-xs hidden sm:table-cell">
-                        {formatTimestamp(msg.timestamp)}
+                      <TableCell
+                        className="text-muted-foreground text-xs hidden sm:table-cell"
+                        title={formatFullDate(msg.timestamp)}
+                      >
+                        {formatRelativeTime(msg.timestamp)}
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">

@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { formatBytes, formatNumber, formatRelativeTime } from "@/lib/utils"
+import { formatBytes, formatNumber, formatRelativeTime, formatFullDate } from "@/lib/utils"
 import { Activity, Layers, RefreshCw, Inbox } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { Link } from "@tanstack/react-router"
@@ -132,7 +132,10 @@ export function Overview() {
                         {formatBytes(stream.memory_bytes)}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right text-muted-foreground text-sm hidden md:table-cell pr-6">
+                    <TableCell
+                      className="text-right text-muted-foreground text-sm hidden md:table-cell pr-6"
+                      title={stream.last_activity ? formatFullDate(stream.last_activity) : undefined}
+                    >
                       {stream.last_activity ? formatRelativeTime(stream.last_activity) : 'Never'}
                     </TableCell>
                   </TableRow>

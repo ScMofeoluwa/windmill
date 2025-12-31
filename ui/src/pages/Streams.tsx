@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { formatBytes, formatNumber, formatRelativeTime } from "@/lib/utils"
+import { formatBytes, formatNumber, formatRelativeTime, formatFullDate } from "@/lib/utils"
 import { Database, Layers, Search, RefreshCw, Activity, Inbox } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
@@ -126,7 +126,10 @@ export function Streams() {
                         {formatBytes(stream.memory_bytes)}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right text-muted-foreground text-sm hidden md:table-cell">
+                    <TableCell
+                      className="text-right text-muted-foreground text-sm hidden md:table-cell"
+                      title={stream.last_activity ? formatFullDate(stream.last_activity) : undefined}
+                    >
                       {stream.last_activity ? formatRelativeTime(stream.last_activity) : 'Never'}
                     </TableCell>
                     <TableCell className="text-right font-mono text-xs text-muted-foreground hidden lg:table-cell pr-6">
