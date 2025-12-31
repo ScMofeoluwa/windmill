@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/redis/go-redis/v9"
+
 	"github.com/scmofeoluwa/windmill/internal/api"
 	"github.com/scmofeoluwa/windmill/internal/monitor"
 )
